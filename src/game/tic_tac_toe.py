@@ -132,6 +132,7 @@ class TicTacToe(object):
 
     def check_game_status(self, player_choices, player):
         ''' '''
+        message = ""
         for set_win in self.winning_combinations:
             if set_win.issubset(player_choices):
                 self.game_end = True
