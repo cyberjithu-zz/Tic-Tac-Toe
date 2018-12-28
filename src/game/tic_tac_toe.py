@@ -91,8 +91,10 @@ class TicTacToe(object):
         '''
         if player == self.player_one_name:
             return False, self.player_one_moves
-        else:
+        elif player == self.player_two_name:
             return True, self.player_two_moves
+        else:
+            raise ValueError("Invalid Player Name")
 
     def update_player_moves(self, player, choice):
         '''Based on the player name update the move in their respective sets
