@@ -1,17 +1,29 @@
+# -*- coding: utf-8 -*-
+
 import random
 
-from exceptions import InvalidMoveException
+from utils import gen_name
+from tictactoe_exceptions import InvalidMoveException
 
 
 class TicTacToe(object):
 
-    def __init__(self, player_one_name, player_two_name, bot=False):
+    def __init__(self, player_one_name='One', player_two_name='Two', bot=False):
         self.player_one_name = player_one_name
         self.player_two_name = player_two_name
         self.bot = bot
+        self.reset_game()
+
+    def reset_game(self):
+        '''Reset the values to defaults '''
+        if self.bot:
+            self.player_two_name = gen_name()
         self.player_one_moves = set()
         self.player_two_moves = set()
         self.toss()
+        self.status = None
+        self.game_end = None
+        self.generate_moves()
 
     def toss(self):
         if random.randint(1, 2) == 1:
@@ -20,6 +32,7 @@ class TicTacToe(object):
             self.player_one_turn = False
 
     def generate_moves(self, dimension=3):
+        print 'aaaaaaaaaaaaaa'
         '''Generate all possible combinations of the game board along with
             the winning positions.
         '''
@@ -59,6 +72,28 @@ class TicTacToe(object):
         del column_set
         del row_set
 
+    def get_player_pointer(self, player):
+        '''Reuturn the current player move set and a boolean value to
+            update the `player_one_turn` value.
+
+            Args:
+                player:     str, name of the player
+
+
+            Return:
+                turn, choice_set:   tuple(bool, set)
+
+                                        contains a boolean value,
+                                        which indicates the first player turn status and
+
+                                        a set, of that corresponding players choices he has
+                                        already taken.
+        '''
+        if player == self.player_one_name:
+            return False, self.player_one_moves
+        else:
+            return True, self.player_two_moves
+
     def update_player_moves(self, player, choice):
         '''Based on the player name update the move in their respective sets
 
@@ -69,18 +104,45 @@ class TicTacToe(object):
 
         '''
         # first player
-        if self.player_one_turn:
-            self.player_one_moves.add(choice)
-            self.possible_moves.remove(choice)
-            self.player_one_turn = False
-        else:
-            self.player_two_moves.add(choice)
-            self.possible_moves.remove(choice)
-            self.player_one_turn = True
+        player_turn, player_choices = self.get_player_pointer(player)
+        player_choices.add(choice)
+        self.possible_moves.remove(choice)
+        self.player_one_turn = player_turn
+        self.check_game_status(player_choices, player)
+
+    def make_bot_moves(self):
+        pass
 
     def mark_choice(self, player, choice):
+        print '>>>>>>>>', player, choice, self.player_one_name, self.player_two_name
         '''Add the movement to respective player's choice set'''
-        if choice in self.possible_moves:
-            pass
+        if choice not in self.possible_moves:
+            raise InvalidMoveException("Not a valid choice of input")
         else:
-            raise  InvalidMoveException("Not a valid choice of input")
+            # restrict the player from making two moves together
+            # `if` and `elif` can be combined by an `or` statment
+            # but for readability purpose splitted into two.
+            if self.player_one_turn and player == self.player_two_name:
+                raise InvalidMoveException("Please wait for the opponent to play before you make further move")
+            elif not self.player_one_turn and player == self.player_one_name:
+                raise InvalidMoveException("Please wait for the opponent to play before you make further move")
+            else:
+                self.update_player_moves(player, choice)
+
+    def check_game_status(self, player_choices, player):
+        ''' '''
+        for set_win in self.winning_combinations:
+            if set_win.issubset(player_choices):
+                self.game_end = True
+                self.status = player
+                break
+        # if possible_moves is empty no further move is possible
+        if not self.possible_moves:
+            self.game_end = True
+            self.status = "D"
+
+
+if __name__ == '__main__':
+    game = TicTacToe()
+    game.generate_moves()
+    print player_one_turn
