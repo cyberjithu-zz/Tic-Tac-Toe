@@ -41,6 +41,18 @@ class TestTicTacToe(unittest.TestCase):
         with self.assertRaises(ValueError) as testexception:
             self.game.mark_choice('TestPlayer', (1, 1))
 
+    def test_player_one_wins(self):
+        ''' Player one wins the game'''
+        # set starting to player one
+        self.game.player_one_turn = True
+        self.game.mark_choice('One', (1, 1))
+        self.game.mark_choice('Two', (0, 0))
+        self.game.mark_choice('One', (1, 0))
+        self.game.mark_choice('Two', (2, 0))
+        self.game.mark_choice('One', (1, 2))
+        self.assertEqual(self.game.status, "One")
+        self.assertTrue(self.game.game_end)
+
 
 if __name__ == '__main__':
     unittest.main()
