@@ -8,10 +8,11 @@ from tictactoe_exceptions import InvalidMoveException
 
 class TicTacToe(object):
 
-    def __init__(self, player_one_name='One', player_two_name='Two', bot=False):
+    def __init__(self, player_one_name='One', player_two_name='Two', bot=False, dimension=3):
         self.player_one_name = player_one_name
         self.player_two_name = player_two_name
         self.bot = bot
+        self.dimension = dimension
         self.reset_game()
 
     def reset_game(self):
@@ -31,8 +32,7 @@ class TicTacToe(object):
         else:
             self.player_one_turn = False
 
-    def generate_moves(self, dimension=3):
-        print 'aaaaaaaaaaaaaa'
+    def generate_moves(self):
         '''Generate all possible combinations of the game board along with
             the winning positions.
         '''
@@ -47,12 +47,12 @@ class TicTacToe(object):
         # stores the two diagonal winning positions, for winning moves
         diagonal_set1 = set()
         diagonal_set2 = set()
-        for ival in xrange(dimension):
-            for jval in xrange(dimension):
+        for ival in xrange(self.dimension):
+            for jval in xrange(self.dimension):
                 # for diagonal values
                 if ival == jval:
                     diagonal_set1.add((ival, jval))
-                    diagonal_set2.add((dimension - ival - 1, jval))
+                    diagonal_set2.add((self.dimension - ival - 1, jval))
                 # for all possible combos
                 self.possible_moves.append((ival, jval))
                 # winning row set
@@ -114,7 +114,6 @@ class TicTacToe(object):
         pass
 
     def mark_choice(self, player, choice):
-        print '>>>>>>>>', player, choice, self.player_one_name, self.player_two_name
         '''Add the movement to respective player's choice set'''
         if choice not in self.possible_moves:
             raise InvalidMoveException("Not a valid choice of input")
@@ -140,9 +139,24 @@ class TicTacToe(object):
         if not self.possible_moves:
             self.game_end = True
             self.status = "D"
+        self.show_console_board()
 
+    def show_console_board(self):
+        print '     ' + ' |  '.join([str(i) for i in xrange(self.dimension)])
+        print '   ' + '-' * (self.dimension * 5)
+        for i in xrange(self.dimension):
+            print ' {} |'.format(i),
+            for j in xrange(self.dimension):
+                if (i, j) in self.player_one_moves:
+                    print 'X ' + '| ',
+                elif (i, j) in self.player_two_moves:
+                    print 'O ' + '| ',
+                else:
+                    print '  | ',
+            else:
+                print
+                print '   ' + '-' * (self.dimension * 5)
 
 if __name__ == '__main__':
     game = TicTacToe()
     game.generate_moves()
-    print player_one_turn
