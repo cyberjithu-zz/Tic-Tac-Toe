@@ -136,14 +136,16 @@ class TicTacToe(object):
             if set_win.issubset(player_choices):
                 self.game_end = True
                 self.status = player
+                message = "\n\nGame Over! {} won the match\n\n".format(player)
                 break
         # if possible_moves is empty no further move is possible
         if not self.possible_moves:
             self.game_end = True
-            self.status = "D"
-        self.show_console_board()
+            self.status = "DRAW"
+            message = "\n\nGame Over! Its a DRAW\n\n"
+        self.show_console_board(message)
 
-    def show_console_board(self):
+    def show_console_board(self, message=""):
         print '     ' + ' |  '.join([str(i) for i in xrange(self.dimension)])
         print '   ' + '-' * (self.dimension * 5)
         for i in xrange(self.dimension):
@@ -158,7 +160,5 @@ class TicTacToe(object):
             else:
                 print
                 print '   ' + '-' * (self.dimension * 5)
+        print message
 
-if __name__ == '__main__':
-    game = TicTacToe()
-    game.generate_moves()
