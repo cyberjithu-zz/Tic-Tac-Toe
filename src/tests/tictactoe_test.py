@@ -54,5 +54,33 @@ class TestTicTacToe(unittest.TestCase):
         self.assertTrue(self.game.game_end)
 
 
+    def test_player_two_wins(self):
+        ''' Player two wins the game'''
+        # set starting to player two
+        self.game.player_two_turn = True
+        self.game.mark_choice('Two', (1, 2))
+        self.game.mark_choice('One', (1, 1))
+        self.game.mark_choice('Two', (0, 2))
+        self.game.mark_choice('One', (2, 0))
+        self.game.mark_choice('Two', (2, 2))
+        self.assertEqual(self.game.status, "Two")
+        self.assertTrue(self.game.game_end)
+
+    def test_draw_match(self):
+        '''Test case for match draw '''
+        self.game.player_two_turn = True
+        self.game.mark_choice('Two', (1, 2))
+        self.game.mark_choice('One', (1, 1))
+        self.game.mark_choice('Two', (0, 2))
+        self.game.mark_choice('One', (2, 2))
+        self.game.mark_choice('Two', (0, 0))
+        self.game.mark_choice('One', (0, 1))
+        self.game.mark_choice('Two', (2, 1))
+        self.game.mark_choice('One', (2, 0))
+        self.game.mark_choice('Two', (1, 0))
+        self.assertEqual(self.game.status, "DRAW")
+        self.assertTrue(self.game.game_end)
+
+
 if __name__ == '__main__':
     unittest.main()
